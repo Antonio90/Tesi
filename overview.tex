@@ -1,0 +1,22 @@
+\chapter{Overview e progettazione di sistema}
+\label{chap:overview e progettazione di sistema}
+In questo capitolo viene discusso lo scopo del progetto e le scelte progettuali adottate. Verranno toccati i principali problemi incontrati durante il lavoro e le loro risoluzioni. Infine, sarà descritta l'architettura del software con approfondimenti sui principali componenti.
+
+\section{Scopo del progetto}
+\label{sec:scopo del progetto}
+Lo scopo principale del lavoro di tesi è quello di creare un sistema distribuito che permetta la visualizzazione real time, la storicizzazione e l'analisi delle transazioni  provenienti dalla blockchain di bitcoin. L'obiettivo principale è quello di riuscire a creare un sistema che gestisca grandi quantità di dati in un ambiente distribuito, garantendo affidabilità e consistenza dei dati anche in caso di guasti.
+\\La prima grande sfida, quindi è stata quella di trovare un framework o un tool che permettesse di programmare su di un sistema distribuito, senza complicarci la vita. Facendo ricerche sul web la tecnologia che più si accostava meglio al mio problema è stata Apache Spark [\ref{sec:spark}]. Questo strumento riesce a garantire a pieno i vincoli che ci siamo imposti. Risolto il problema infrastrutturale si è proceduto all'analisi dei singoli sottoproblemi. 
+\\L'applicazione fa uso dei blocchi grezzi da bitcoin, per testare il carico di lavoro sul sistema, per questo si è preferito utilizzare il software nativo del progetto Bitcoin: Bitcoind [\ref{sec:bitcoind}]. Bitcoind è un demone che invia blocchi o transazioni (a seconda di come lo si imposta) su di una coda di tipo publisher-subscriber tramite protocollo ZeroMQ [\ref{sec:ZMQ}]. Per raggiungere il nostro scopo, e quindi leggere i blocchi, è stato implementato in Spark un connettore che permette di leggere i dati real time dalla coda.
+\\Ottenuti i blocchi dalla coda, il problema si è spostato sul conservare i dati ottenuti in modo da poterli processare ed analizzare. Fortunatamente, Spark offre una nativa collaborazione con il FileSystem distribuito Hadoop [\ref{sec:hadoop HDFS}], permettendomi di tenerli salvati su una memoria di massa.
+\\Oltre ad Hadoop, i dati sono stati immagazzinati in Neo4j [\ref{sec:neo4j}]. Un database NoSQL che permette il salvataggio dei dati sottoforma di grafo, cosi da poter gestire facilmente i collegamenti tra le varie transazioni.
+\\L'ultimo step, è stato quello di fare analisi delle transazioni, trovando i nodi con il maggior PageRank [\ref{sec:graphx (PageRank)}]. Anche in questo caso Spark è venuto in contro grazie al modulo GraphX, contenuto nel framework, il quale contiene algoritmi (come il PageRank) già sviluppati per l'analisi sui grafi.  
+\\Una volta che il sistema distribuito è completo, non resta che mostrare i risultati ottenuti. Le scelte nel campo del front-end sono migliaia ma per semplicità ed una forte attitudine ai sistemi real-time si è preferito usare NodeJS [\ref{sec:nodejs}]. NodeJS ha infatti dei moduli che permettono l'accesso a Kafka, il tramite tra la parte di back-end e front-end. Inoltre, con NodeJS è stata costruita l'interfaccia grafica sottoforma di webapp, cosi da consentire gli utenti di visualizzare lo stato delle transazioni, i valori del PageRank e le transazioni che arrivano in real time.
+
+
+\section{Architettura  del progetto}
+\label{sec:architettura del progetto}
+
+\input{overview/bitcoind}
+\input{overview/spark}
+\input{overview/zookeeper}
+\input{overview/webapp}

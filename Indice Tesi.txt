@@ -1,0 +1,28 @@
+1) Intro
+	blockchain (come fonte di bigdata)
+	Bitcoin
+	analisi dati su architetture distribuite
+	stato dell'arte(applicazioni per l'analisi di bitcoin)
+2) Overview e progettazione di sistema
+	Bitcoind
+		ZMQ
+	Spark
+		Hadoop HDFS
+		Neo4j
+		Graphx (PageRank)
+	Zookeeper
+		Kafka
+	WebApp
+		NodeJS
+		Kafka-Client
+		ExpressHandelbars
+		Materializecss
+		Websocket
+		D3js
+3) Implementazione 
+		Diagram Class
+		Screen di codice
+		Github
+4) Conclusioni e Sviluppi futuri
+	
+	

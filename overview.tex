@@ -1,6 +1,6 @@
 \chapter{Overview e progettazione di sistema}
 \label{chap:overview e progettazione di sistema}
-In questo capitolo viene discusso lo scopo del progetto e le scelte progettuali adottate. Verranno toccati i principali problemi incontrati durante il lavoro e le loro risoluzioni. Infine, sarà descritta l'architettura del software con approfondimenti sui principali componenti.
+In questo capitolo viene messo in luce lo scopo dell'elaborato realizzato con particolare attenzione alle scelte progettuali adottate e alle ricerche effettuate per implementare l'argomento trattato, onde presentare un quadro generale completo. Viene, inoltre, descritta l'architettura del software, sottolineando ed approfondendo le sue principali componenti.
 
 \section{Scopo del progetto}
 \label{sec:scopo del progetto}
@@ -10,11 +10,11 @@ Lo scopo principale del lavoro di tesi è quello di creare un sistema distribuit
 
 \section{Architettura  del progetto}
 \label{sec:architettura del progetto}
-Le principali scelte di progetto sono state prese coerentemente con lo stato dell’arte e si è tentato di non introdurre nuova complessità al panorama esistente, ricorrendo a tecnologie, protocolli e standard già esistenti ed affermati, senza definirne di nuovi. Quindi, l’architettura dovrà essere sufficientemente generale da poter garantire nuovi sviluppi ed evoluzioni future e da non comportare l’esclusione a priori di determinate soluzioni e tecnologie. 
-\\Il sistema si divide in due macro applicazioni:
+Le principali scelte di progetto sono state prese coerentemente con lo stato dell’arte e si è tentato di non introdurre nuova complessità al panorama esistente, ricorrendo a tecnologie, protocolli e standard già esistenti ed affermati, senza definirne di nuovi. Quindi, l’architettura dovrà essere sufficientemente generale in modo da poter garantire nuovi sviluppi ed evoluzioni future e da non comportare l’esclusione a priori di determinate soluzioni e tecnologie. 
+\\Il sistema, quindi, può essere diviso logicamente in due moduli:
 \begin{itemize}
-	\item \textbf{Back end}: 
-	\item \textbf{Front end}:
+	\item \textbf{Sistema distribuito (back-end)}: E' la parte non visibile all'utente. Si occupa del recupero dei dati dalla blockchain di bitcoin, della storicizzazione e della pubblicazione sui topic di kafka. Interamente scritto in Java, comprende Bitcoind, Spark, Hadoop, Neo4j, Zookeeper.
+	\item \textbf{Webapp (front-end)}: E' la parte visibile all'utente finale. Si occupa della rappresentazione grafica delle transazioni. Scritto in principalmente in Javascript, utilizza la potenza di NodeJS per creare l'interfaccia grafica. Integra nel proprio ecosistema Express Handlebars, WebSocket, MaterialCSS e D3js.
 \end{itemize} 
 
 La prima grande sfida, quindi è stata quella di trovare un framework o un tool che permettesse di programmare su di un sistema distribuito, senza complicarci la vita. Facendo ricerche sul web la tecnologia che più si accostava meglio al mio problema è stata Apache Spark [\ref{sec:spark}]. Questo strumento riesce a garantire a pieno i vincoli che ci siamo imposti. Risolto il problema infrastrutturale si è proceduto all'analisi dei singoli sottoproblemi. 
@@ -24,7 +24,11 @@ La prima grande sfida, quindi è stata quella di trovare un framework o un tool 
 \\L'ultimo step, è stato quello di fare analisi delle transazioni, trovando i nodi con il maggior PageRank [\ref{sec:graphx (PageRank)}]. Anche in questo caso Spark è venuto in contro grazie al modulo GraphX, contenuto nel framework, il quale contiene algoritmi (come il PageRank) già sviluppati per l'analisi sui grafi.  
 \\Una volta che il sistema distribuito è completo, non resta che mostrare i risultati ottenuti. Le scelte nel campo del front-end sono migliaia ma per semplicità ed una forte attitudine ai sistemi real-time si è preferito usare NodeJS [\ref{sec:nodejs}]. NodeJS ha infatti dei moduli che permettono l'accesso a Kafka, il tramite tra la parte di back-end e front-end. Inoltre, con NodeJS è stata costruita l'interfaccia grafica sottoforma di webapp, cosi da consentire gli utenti di visualizzare lo stato delle transazioni, i valori del PageRank e le transazioni che arrivano in real time.
 
+\input{overview/backend}
 \input{overview/bitcoind}
 \input{overview/spark}
 \input{overview/zookeeper}
+
 \input{overview/webapp}
+\input{overview/nodejs}
+\input{overview/materialcss}

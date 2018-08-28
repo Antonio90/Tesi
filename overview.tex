@@ -28,20 +28,8 @@ Per la costruzione di questa infrastruttura, la prima grande sfida, è stata que
 \\Risolto il problema infrastrutturale si è proceduto all'analisi dei singoli sottoproblemi. L'applicazione, per testare il carico di lavoro sul sistema, fa uso dei blocchi grezzi provenienti dal software nativo del progetto Bitcoin: Bitcoind [\ref{sec:bitcoind}]. Bitcoind è un demone che invia blocchi o transazioni (a seconda di come lo si imposta) su di una coda di tipo publisher-subscriber tramite protocollo ZeroMQ [\ref{sec:ZMQ}]. I dati, quindi, sono prelevati da Bitcoind grazie all'implementazione di un connettore creato ad hoc.
 \\Ottenuti i blocchi dalla coda, è nata l'esigenza di conservare i dati ottenuti così da poterli processare ed analizzare. Fortunatamente, Spark offre una nativa collaborazione con il FileSystem distribuito Hadoop [\ref{sec:hadoop HDFS}], permettendomi di tenerli salvati su una memoria di massa distribuita.
 \\Oltre ad Hadoop, i dati sono stati immagazzinati in Neo4j [\ref{sec:neo4j}]. Un database NoSQL che permette il salvataggio dei dati sottoforma di grafo, cosi da poter gestire facilmente i collegamenti tra le varie transazioni.
-\\L'ultimo step, è stato quello di fare analisi delle transazioni, trovando i nodi con il maggior PageRank [\ref{sec:graphx (PageRank)}]. Anche in questo caso Spark è venuto in contro grazie al modulo GraphX, contenuto nel framework, il quale contiene algoritmi (come il PageRank) già sviluppati per l'analisi sui grafi.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\textwidth]{images/sistemaDistribuito.png}
-	\caption{Architettura in dettaglio del sistema distribuito.}
-	\label{fig:distribuitedSystemArchitetture}
-\end{figure}  
-Una volta che il sistema distribuito è completo, non resta che mostrare i risultati ottenuti. Le scelte nel campo del front-end sono migliaia ma per semplicità ed una forte attitudine ai sistemi real-time si è preferito usare NodeJS [\ref{sec:nodejs}]. NodeJS ha dei moduli che permettono l'accesso a Kafka, il tramite tra la parte di back-end e front-end. Quindi, con NodeJS è stato creato un sito web consentendo agli utenti dal proprio browser, di visualizzare lo stato delle transazioni, i valori del PageRank e le transazioni che arrivano in real time.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\textwidth]{images/webApp.png}
-	\caption{Architettura in dettaglio della webapp.}
-	\label{fig:webAppArchitetture}
-\end{figure}
+\\L'ultimo step, è stato quello di fare analisi delle transazioni, trovando i nodi con il maggior PageRank [\ref{sec:graphx (PageRank)}]. Anche in questo caso Spark è venuto in contro grazie al modulo GraphX, contenuto nel framework, il quale contiene algoritmi (come il PageRank) già sviluppati per l'analisi sui grafi.  
+\\Una volta che il sistema distribuito è completo, non resta che mostrare i risultati ottenuti. Le scelte nel campo del front-end sono migliaia ma per semplicità ed una forte attitudine ai sistemi real-time si è preferito usare NodeJS [\ref{sec:nodejs}]. NodeJS ha dei moduli che permettono l'accesso a Kafka, il tramite tra la parte di back-end e front-end. Quindi, con NodeJS è stato creato un sito web consentendo agli utenti dal proprio browser, di visualizzare lo stato delle transazioni, i valori del PageRank e le transazioni che arrivano in real time.
 \input{overview/backend}
 \input{overview/bitcoind}
 \input{overview/spark}

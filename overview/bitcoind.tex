@@ -1,8 +1,15 @@
 \subsection{Bitcoind}
 \label{sec:bitcoind}
-Bitcoind è un software che implementa il protocollo Bitcoin per l'utilizzo delle remote procedure call(RPC). Esso è anche il secondo client Bitcoin nella storia del network.\cite{wiki:bitcoind}.
-Questo programma è la fonte dei dati per l'applicazione, difatti invia i blocchi  
+Il primo componetene del sistema distribuito ha il compito di fornire i dati da elaborare. Questa funzione è svolta dal demone Bitcoind.
+\\Bitcoind, formalmente, è un software che implementa il protocollo Bitcoin per l'utilizzo delle remote procedure call (RPC). Esso è anche il secondo client Bitcoin nella storia del network \cite{wiki:bitcoind}. Per sua natura, è eseguito come processo in background quindi l'utente per interagire con esso ha bisogno di farlo tramite una interfaccia da riga di comando chiamata \textit{bitcoin-cli}. Il demone, inoltre, funge da nodo della rete Bitcoin, infatti si sincronizza con la blockchain, verifica le transazioni ed invia blocchi. Esiste una versione anche con interfaccia grafica del demone chiamata \textit{Bitcoin-QT o Bitcoin Core}, ma per lo scopo dell'elaborato si è preferito utilizzare la versione lite per limitare l'utilizzo di risorse.
+\\La versione demone, inoltre, ha il vantaggio di creare una coda ZeroMQ per la comunicazione con applicazioni esterne. Il sistema distribuito, utilizza questa funzione per recuperare i blocchi in formato grezzo (sequenza di byte) ogni qualvolta sono validati dalla blockchain.
 
-
-\subsubsection{ZMQ}
+\subsubsection{ZeroMQ}
 \label{sec:ZMQ}
+ZeroMQ (anche conosciuto come ØMQ, 0MQ, o zmq) è una libreria di messagistica asincrona ad alte prestazioni, destinata all'uso in applicazioni distribuite o concorrenti. Fornisce code di messaggi, ma a differenza dei middleware orientati ai messaggi, il sistema ZeroMQ può essere eseguito senza un broker di messaggi dedicato \cite{wiki:ZMQ}. In particolare, fornisce socket che trasportano messaggi atomici in diversi modi:
+\begin{itemize}
+\item Request-reply: Connette un insieme di clienti ad un insieme di servizi. Questo è una Remote Procedure Call (RPC).
+\item Publish-subscribe: Connette un insieme di publisher ad un insieme di subscriber.
+\item Push-pull (pipeline): Connette i nodi in un pattern fan-out/fan-in che può avere più passaggi e cicli. Distribuisce in maniera parallela i messaggi.
+\item Exclusive pair: Collega due socket in maniera esclusiva.
+\end{itemize} 

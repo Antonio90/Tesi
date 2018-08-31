@@ -17,8 +17,15 @@ Nel sistema distribuito, poichè c'è l'esigenza di recuperare i dati in real ti
 	\caption{Come vengono gestiti i dati in Spark Streaming.}
 	\label{fig:streamingSpark}
 \end{figure}
-
-Nel sistema distribuito, per fare analisi dei dati provenienti dall'elaborazione di Spark, è stato scelto il modulo interno Graphx.
+Nel sistema distribuito, per fare analisi dei dati provenienti dall'elaborazione di Spark, è stato scelto il modulo interno GraphX.
+\\GraphX è un nuovo componetene di Apache Spark per grafi ed il calcolo parallelo (PageRank) su di essi. Estende gli RDD di spark introducendo gli Resilient Distribuited Property Graph, oggetti simili a grafi che permettono l'inserimento di proprietà per vertici e archi, rendendo facilitata l'implementazione. Inoltre, per aiutare nell'analisi, espone un insieme di operatori fondamentali (sottografo, joinVertices e aggregateMessages) come variante ottimizzata dell'API Pregel. In più, Graphx include una crescente collezione di algoritmi e costrutti per grafi per semplificare le attività di analisi \cite{spark:graphx}. Attualmente le sue API sono scritte in Scala, Java e Python.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{images/graphxLogo.png}
+	\caption{Logo GraphX.}
+	\label{fig:graphxLogo}
+\end{figure}
+GraphX, come detto in precedenza, gestisce i dati in memoria come se fossero grafi. Infatti, utilizza archi e vertici che hanno delle proprietà  connesse. Ogni vertice possiede un identificativo univoco a 64bit (VertexID), mentre, allo stesso modo, gli archi contengono gli identificativi di origine e partenza. Queste proprietà sono definite e tenuti in memoria come oggetti e di conseguenza con metodi creati ad-hoc per gestirli.  
 
 
 \subsection{Hadoop HDFS}

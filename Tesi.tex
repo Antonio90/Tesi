@@ -65,7 +65,26 @@
 	breakatwhitespace=true,
 	frame=lines,
 	numbers=left,
-	numberstyle=\footnotesize,
+	numberstyle=\footnotesize
+}
+
+\lstdefinelanguage{Cypher}{
+    keywords={Match, retrun, MATCH, RETURN, Match, Return},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/}
+}
+
+\lstset{
+	captionpos=b,
+	language=Cypher,
+	basicstyle =\small\ttfamily,
+	keywordstyle=\color{black}\bfseries,
+	breaklines=true,
+	breakatwhitespace=true,
+	frame=lines,
+	numbers=left,
+	numberstyle=\footnotesize
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

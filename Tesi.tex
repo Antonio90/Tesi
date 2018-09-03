@@ -87,6 +87,44 @@
 	numberstyle=\footnotesize
 }
 
+\lstdefinelanguage{HTML}{
+    keywords={<, >, div, p, label, table, class, />, <div, </div>, {{, }}, h1, h2},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{<!--}{-->}
+}
+
+\lstset{
+	captionpos=b,
+	language=HTML,
+	basicstyle =\small\ttfamily,
+	keywordstyle=\color{black}\bfseries,
+	breaklines=true,
+	breakatwhitespace=true,
+	frame=lines,
+	numbers=left,
+	numberstyle=\footnotesize
+}
+
+\lstdefinelanguage{Javascript}{
+    keywords={var, =, {, }, :},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/}
+}
+
+\lstset{
+	captionpos=b,
+	language=Javascript,
+	basicstyle =\small\ttfamily,
+	keywordstyle=\color{black}\bfseries,
+	breaklines=true,
+	breakatwhitespace=true,
+	frame=lines,
+	numbers=left,
+	numberstyle=\footnotesize
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % FRENCHSPACING VA _SEMPRE_ ABILITATO PER DOCUMENTI IN ITALIANO

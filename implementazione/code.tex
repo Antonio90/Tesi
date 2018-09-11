@@ -1,6 +1,103 @@
 \section{Codice}
 \label{sec:codice}
-Come detto nel paragrafo precedente, la classe principale "App" contiene l'inizializzazione dell'intera applicazione:
-CODICE 
+L'elaborato di tesi, come detto in precedenza, è suddiviso in due distinti progetti: Sistema Distribuito e Blockchain Explorer. In questo capitolo, l'attenzione sarà focalizzata sulla reale implementazione, visualizzando e commentando righe di codice con maggiore interesse.
+\\ Ogni applicazione Java ha un \textit{entry point} e cioè una funzione principale che viene richiamata all'avvio dell'applicativo. All'interno del sistema distribuito l'entry point è definita all'interno della classe \textit{App}. Questa classe ha il compito di:
+\begin{itemize}
+\item \textbf{Recupero Costanti}: Il primo passo che effettua l'applicazione è il recupero delle costanti definite all'interno di un file di \textit{properties}: \textit{bitcoin.properties}. Per leggere le costanti di questo file utilizza un metodo statico della classe \textit{PropertiesReader} chiamato \textit{readProperties}. Questo metodo [\ref{lst:prop}], prende in input un file di proprieties e restituisce una mappa chiave-valore con tutte le proprietà definite nel file.
+
+\begin{lstlisting}[language=Java, label=lst:prop, caption={Metodo readProperties.}]
+public static Map<String, String> readProperties(String propFileName){
+
+	Map<String, String>  propMap = new HashMap<String,String>();
+	Properties prop = new Properties();
+
+	try {
+
+		prop.load(
+			PropertiesReader.class
+					.getClassLoader()
+					.getResourceAsStream(propFileName));
+
+		for (String key : prop.stringPropertyNames()) {
+			String value = prop.getProperty(key);
+			propMap.put(key, value);
+		}
+
+	} catch (IOException e) {
+
+		e.printStackTrace();
+
+	}
+
+	return propMap;
+}
+\end{lstlisting}
+
+\item \textbf{Inizializzare Spark e connessione con Bitcoind}: Caricate le costanti in una mappa, non resta che inizializzare Spark. Per fare ciò, viene creato un oggetto di tipo \textit{JavaStreamingContext} [\ref{lst:intiSpark}].
+
+\begin{lstlisting}[language=Java, label=lst:intiSpark, caption={Inizializzazione Spark Streaming.}]
+JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, new Duration(2000));
+\end{lstlisting}
+
+Questa classe si occupa di creare il contesto streaming di Spark secondo le configurazioni presenti nell'oggetto \textit{sparkConf} e di creare Job eseguiti ogni due secondi. All'oggetto \textit{sparkConf} viene dato un nome che lo identifica in caso di più Job, impostato il tipo di cluster da creare ed infine l'URL di connessione col database Neo4j [\ref{lst:sparkConf}].
+
+\begin{lstlisting}[language=Java, label=lst:sparkConf, caption={Creazione oggetto sparkConf.}]
+SparkConf sparkConf = new SparkConf().setAppName(propMap.get("appSparkName"));
+					
+if (!sparkConf.contains("spark.master")) {
+	/*local[K] (Run Spark locally with K threads, 
+	usually k is set up to match the number of 
+	cores on your machine)*/
+	sparkConf.setMaster("local[2]"); 
+}
+
+/**
+ * Configuration of Neo4j
+ * */
+sparkConf.set("spark.neo4j.bolt.url", neo4jConnectionUrl);
+\end{lstlisting}
+
+Una volta che il contesto di Spark è stato creato, non resta che creare il collegamento tra il Sistema Distribuito e Bitcoind. Questa operazione viene fatta tramite l'utilizzo della libreria \textit{spark-streaming-zeromq} di Apache Bahir. La libreria in questione permette di creare una connessione tra una coda ZMQ (utilizzata da Bitcoind) e Spark [\ref{lst:bahir}].
+
+\begin{lstlisting}[language=Java, label=lst:bahir, caption={Metodo della libreria Spark Streaming ZeroMQ.}]
+JavaDStream<byte[]> lines = ZeroMQUtils.createStream(streamingContext, host, subscribe, bytesToObjects );
+\end{lstlisting}
+
+Il metodo \textit{createStream} associa, quindi, la ricezione dei dati ad una funzione di callback da richiamare per gestire i dati. In questo caso, la funzione in questione è \textit{bytesToObjects} \ref{lst:bytesToObjects}, che estrae i byte provenienti dalla coda di Bitcoind e li trasforma in oggetti parallelizzati: \textit{JavaDStream}.
+
+\begin{lstlisting}[language=Java, label=lst:bytesToObjects, caption={Funzione bytesToObjects.}]
+Function<byte[][], Iterable<byte[]>> bytesToObjects = new Function<byte[][], Iterable<byte[]>>() {
+            @Override
+            public Iterable<byte[]> call(byte[][] bytes) throws Exception {
+                Iterable iterable = Arrays.asList(bytes[0]);
+                return iterable;
+            }
+        };
+\end{lstlisting}
+
+\item \textbf{Salvare i dati nell'HDFS}: Ottenuti i byte provenienti da Bitcoind può partire l'elaborazione. Il primo step da effettuare è il salvataggio sul filesystem distribuito Hadoop. Questo framework, precedentemente citato, si occupa della storicizzazione distribuita dei dati. Spark, abituato a lavorare su architetture distribuite, ha al suo interno metodi nativi che permettono di salvare dati in Hadoop. Infatti è bastato chiamare il metodo \textit{saveAsTextFile} della classe \textit{RDD} per salvare i dati all'interno del filesystem.
+
+\begin{lstlisting}[language=Java, label=lst:hadoop, caption={Salvataggio Bytes su HDFS.}]
+lines.foreachRDD((bytes, time)-> {
+
+	List<byte[]> blockAsByte = bytes.collect();
+	if (!blockAsByte.isEmpty()) {
+		bytes.coalesce(1).saveAsTextFile(hadoopHdfs + File.separator + "blocks" + File.separator);
+	}
+
+});
+\end{lstlisting}
+
+Il listato [\ref{lst:hadoop}] mostra come per ogni RDD viene storicizzato il contenuto sul filesystem di Hadoop.
+
+\item \textbf{Lanciare il job di Spark}: Terminate le operazioni preliminari spark è pronto a lanciare il Job 
+\begin{itemize}
+\item \textbf{Trasformare i Byte in oggetti}
+\item \textbf{Salvare in Neo4j}
+\item \textbf{Pubblicare i dati}
+\item \textbf{Calcolare PageRank}
+\end{itemize}
+\end{itemize} 
+ 
 \section{Funzionamento Blockchain Explorer}
 \label{sec:Funzionamento Blockchain Explorer}

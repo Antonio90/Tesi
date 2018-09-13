@@ -88,12 +88,51 @@ lines.foreachRDD((bytes, time)-> {
 });
 \end{lstlisting}
 
-Il listato [\ref{lst:hadoop}] mostra come per ogni RDD viene storicizzato il contenuto sul filesystem di Hadoop.
+Nel listato [\ref{lst:hadoop}] per ogni RDD, viene salvato un file di testo sul filesystem di Hadoop.
 
-\item \textbf{Lanciare il job di Spark}: Terminate le operazioni preliminari spark è pronto a lanciare il Job 
+\item \textbf{Lanciare il job di Spark}: Terminate le operazioni preliminari, Spark è pronto per eseguire il Job. 
+\\Tutti i dati, come visto nel listato \ref{lst:bahir}, sono contenuti in un oggetto chiamato \textit{lines}. Questo oggetto contiene la rappresentazione in byte dei blocchi provenienti da bitcoin, parallelizzati sui vari nodi del cluster. Il primo stepo da eseguire dunque, è la trasformazione da byte in oggetto.
 \begin{itemize}
-\item \textbf{Trasformare i Byte in oggetti}
-\item \textbf{Salvare in Neo4j}
+\item \textbf{Trasformare i Byte in oggetti}: La trasformazione di una sequenza di byte in blocco è demandata a \textit{Bitcoinj}. Questa libreria, creata da Google, è usata per lavorare con il protocollo Bitcoin. Può mantenere un portafoglio, inviare/ricevere transazioni senza bisogno di una copia locale di Bitcoin Core e ha molte altre funzionalità avanzate \cite{bitcoinj:home}. Implementato in Java, offre oggetti e metodi per gestire al meglio i dati provenienti da Bitcoind. 
+\\ Nel Job di Spark, quindi, la trasformazione dei byte è fatta dal metodo \textit{blockMakerFromBytes} di \textit{BlockTestNetManager}. Il metodo in questione, partendo da un array di byte restituisce un oggetto che prende il nome di \textit{Block}. Il listato \ref{lst:bitcoindj} mostra la trasformazione dei byte provenienti di Bitcoin ad oggetto Block. 
+\begin{lstlisting}[language=Java, label=lst:bitcoindj, caption={Array di Byte trasformato in oggetto Block.}]
+BlockTestNetManager blockManager = new BlockTestNetManager();
+Block block = blockManager.blockMakerFromBytes(blockAsByte);
+\end{lstlisting}
+\item \textbf{Salvare in Neo4j}: Per il recupero e l'analisi le transazioni sono storicizzate nel database a grafi Neo4j. Dall'oggetto \textit{block} precedentemente inizializzato, quindi, vengono recuperate tutte le transazioni tramite il metodo \textit{getTransactions()}. Il metodo restituisce una lista di transazioni (\textit{Transaction}) associate al blocco che il Job salva nel database.
+\begin{lstlisting}[language=Java, label=lst:saveNeo, caption={Prelievo transazioni e salvataggio in Neo4j.}]
+for (int i = 0; i < block.getTransactions().size(); i++) {
+	BitcoinTransaction bTx = new BitcoinTransaction(tx.getHashAsString(),
+                                block.getHashAsString(), tx.getInputs(), tx.getOutputs(),
+                                i, new Date());
+    Transaction tx = block.getTransactions().get(i);
+    for(TransactionDBOutput tOut : bTx.getValidReceiver()) {
+		log.info("#### Saving transaction in Neo4j ####");
+        neo4jManager.createORupdate(Constants.NODE_LABEL, String.join(Constants.STRING_DELIMITER, bTx.getValidSender()), Constants.NODE_LABEL, tOut.getHash(),Constants.RELATIONS_LABEL, Constants.TYPE_OF_MONEY, Double.toString(tOut.getValue()),bTx.getHash() ,bTx.getBlockHash(), df.format(bTx.getReceivedTime()));
+	}
+}
+\end{lstlisting}
+Come si vede nel listato \ref{lst:saveNeo}, le transazioni recuperate dal blocco vengono nuovamente trasformate, per comodità, in un oggetto creato ad-hoc \textit{BitcoinTransaction}. Da questo oggetto sono recuperate tutte le transazioni che hanno un valido destinatario (\textit{getValidReceiver()}) e per ognuna di esse viene effettuata una query Cypher \ref{lst:UpdateNeo} che crea o modifica i nodi nel database.
+
+\begin{lstlisting}[language=Java, label=lst:UpdateNeo, caption={Metodo che crea o modifica una transazione in Neo4j.}]
+public void createORupdate(String $fromLabel, String $hashFrom, String $toLabel, String $hashTo, String $relationLabel, String $relType, String $relValue, String $transactionHash, String $blockHash, String receivedDate){
+
+	try (Session session = driver.session()) {
+		String greeting = session.writeTransaction(new TransactionWork<String>(){
+
+		@Override
+		public String execute( Transaction tx ) {
+			StatementResult result = 
+			
+			tx.run("Merge (a:" + $fromLabel + "{hash:'"+ $hashFrom + "'})\n" + "Merge (b:" + $toLabel + "{hash:'" + $hashTo + "'})\n" + "Merge (a)-[r:" + $relationLabel + " {type: '" + $relType + "', value: '" + $relValue + "', transactionHash:'" + $transactionHash +"',blockHash: '" + $blockHash + "', receivedTime:'" + receivedDate + "'}]->(b);", parameters( "","") );
+			return "Relationship Saved";
+		}
+
+		});
+	}
+}
+\end{lstlisting}
+
 \item \textbf{Pubblicare i dati}
 \item \textbf{Calcolare PageRank}
 \end{itemize}

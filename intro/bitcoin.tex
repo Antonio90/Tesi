@@ -10,7 +10,7 @@ Bitcoin (codice: BTC o XBT) è una criptovaluta e un sistema di pagamento mondia
 \begin{itemize}
 \item \textbf{Nessuna autorità centrale}: non dipende da nessuna terza parte privata o ente governativo, e, pertanto, il valore dei BTC è liberamente contrattato sul mercato. Si tratta quindi di un sistema decentralizzato;
 \item \textbf{Irreversibile e non falsificabile}: una volta che una transazione è stata effettuata ed è inclusa nella blockchain, non può più essere annullata, nemmeno dal mittente;
-\item \textbf{Anonimo}: chiunque può scaricare il software ed iniziare ad effettuare transazioni, senza registrarsi, senza comunicare dati personali e senza svelare la propria identità.
+\item \textbf{Anonimo}: chiunque può scaricare il software ed iniziare ad effettuare transazioni senza registrarsi, comunicare dati personali e senza svelare la propria identità.
 \item \textbf{Sistema distribuito su rete Peer-to-peer (rete paritaria o paritetica)}: qualsiasi nodo è in grado di avviare e completare una transazione in modo autonomo.
 \item \textbf{Inflazione determinata a priori}: L’emissione di nuovi BTC è determinata dall’algoritmo stesso del programma, e non può essere modificata.
 \end{itemize}
@@ -25,7 +25,7 @@ Per capire meglio questi punti, verrà illustrata in modo dettagliato una transa
 
 \subsection{Come avviene una transazione}
 \label{sec:come avviene una transazione}
-Un esepio pratico di scambio di moneta aiuterà nel capire come funziona il sistema. I nostri attori saranno Alice (pagante) e Bob (ricevente).
+Un esempio pratico di scambio di moneta aiuterà nel capire come funziona il sistema. I nostri attori saranno Alice (pagante) e Bob (ricevente).
 \\
 \\I passi da eseguire sono:
 \begin{enumerate}\itemsep2pt
@@ -36,7 +36,7 @@ Un esepio pratico di scambio di moneta aiuterà nel capire come funziona il sist
 
 \item Alice inserisce nel suo software l'indirizzo di Bob e la quantità di Bitcoin da inviare, inoltre specifica l'ammontare della commissione da pagare al minatore (detto "miner") per convalidare la transazione. Ad oggi i più comuni software stabiliscono automaticamente una commisione fissa a 0,00001 bitcoin.
 
-\item Bob vede immediatamente sul suo software la transazione avvenuta, ma prima di considerare il pagamento effettuato attende che la transazione sia inserita nella blockchain.
+\item Bob ritrova sul suo software la transazione avvenuta, ma prima di considerare il pagamento effettuato attende che la transazione sia inserita nella blockchain.
 
 \item In un massimo di 10 minuti circa la transazione viene inserita in un blocco della blockchain da parte del miner, che ha convenienza a inserirla perché in questo modo ottiene la commissione pagata da Alice.
 
@@ -54,7 +54,7 @@ Un esepio pratico di scambio di moneta aiuterà nel capire come funziona il sist
 
 \subsection{Come avviene una transazione dal punto di vista tecnico}
 \label{sec:come avviene una transazione dal punto di vista tecnico}
-La stessa transazione affrontata con un occhio più tecnico, soffermando l'attenzione sulla parte di creazione delle chiavi e della conferma ed aggiunta del blocco.
+La stessa transazione viene affrontata con un occhio più tecnico, soffermando l'attenzione sulla parte di creazione delle chiavi e della conferma ed aggiunta del blocco.
 \\
 \\I passi da eseguire sono:
 \begin{enumerate}\itemsep2pt
@@ -73,9 +73,9 @@ La stessa transazione affrontata con un occhio più tecnico, soffermando l'atten
 \item Il software di Alice decodifica immediatamente l'indirizzo in una normale Public Key Hash
 \item \label{aliceCreaTransazione} Alice crea la transazione. Si può pensare la transazione come un codice che contiene diverse informazioni, ciascuna rappresentabile come una stringa composta da molti caratteri:
 \begin{itemize}
-	\item l’input: uno o più output di una transazione precedente fatta nei confronti 	di Alice, da cui ella attinge i bitcoin che «spedisce» nel nuovo output
-	\item l'output: la quantità di bitcoin spediti. Possono esserci più output per 			ogni transazione, ciascuno identificato con un ID specifico
-	\item l'istruzione per la firma (la "signature script"): ovvero le le istruzioni 		che Bob dovrà fornire per convalidare la transazione, dimostrando di essere il 			possessore del nuovo output. È proprio per la creazione dello script che il 			software di Alice ha bisogno del Public Key Hash fornito da Bob. Le informazioni 		necessarie per validare la firma sono due, entrambe già in possesso di Bob: la 			full Public Key e la Private Key, che dovranno combaciare col Public Key Hash 			specificato da Alice nello script.
+\item l’input: uno o più output di una transazione precedente fatta nei confronti di Alice, da cui ella attinge i bitcoin che «spedisce» nel nuovo output
+\item l'output: la quantità di bitcoin spediti. Possono esserci più output per ogni transazione, ciascuno identificato con un ID specifico
+\item l'istruzione per la firma (la "signature script"): ovvero le istruzioni che Bob dovrà fornire per convalidare la transazione, dimostrando di essere il possessore del nuovo output. È proprio per la creazione dello script che il software di Alice ha bisogno del Public Key Hash fornito da Bob. Le informazioni necessarie per validare la firma sono due, entrambe già in possesso di Bob: la full Public Key e la Private Key, che dovranno combaciare col Public Key Hash specificato da Alice nello script.
 \end{itemize}
 Queste informazioni vengono processate insieme nella creazione di un unico hash chiamato txid (transaction identifier)
 \begin{figure}[H]

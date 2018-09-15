@@ -12,11 +12,8 @@ public static Map<String, String> readProperties(String propFileName){
 	Properties prop = new Properties();
 
 	try {
-
-		prop.load(
-			PropertiesReader.class
-					.getClassLoader()
-					.getResourceAsStream(propFileName));
+	prop.load(PropertiesReader.class.getClassLoader()
+	.getResourceAsStream(propFileName));
 
 		for (String key : prop.stringPropertyNames()) {
 			String value = prop.getProperty(key);
@@ -132,11 +129,67 @@ public void createORupdate(String $fromLabel, String $hashFrom, String $toLabel,
 	}
 }
 \end{lstlisting}
+\item \textbf{Calcolo del PageRank}: L'analisi delle transazioni è un'operazione che richiede molta potenza di calcolo. Il sistema distribuito però, tramite il cluster di Spark, riesce a gestire al meglio queste situazioni garantendo alta affidabilità e rapidità d'esecuzione. Nel progetto di tesi, per mostrare la potenza di Spark è stata utilizzato l'algoritmo di PageRank applicato su milioni di nodi.
 
-\item \textbf{Pubblicare i dati}
-\item \textbf{Calcolare PageRank}
+\begin{lstlisting}[language=Java, label=lst:GraphX, caption={Calcolo PageRank e salvataggio su Neo4j.}]
+log.info("### Start PageRank calculation by Graphx ###");
+
+Graph graph = Neo4jGraph.loadGraph(
+streamingContext.sparkContext().sc(),
+Constants.NODE_LABEL, ScalaUtils.convertListToSeq
+(Arrays.asList(Constants.RELATIONS_LABEL)), Constants.NODE_LABEL);
+
+Graph pageRankGraph = PageRank.run(graph,Constants.NUMBER_OF_PAGE_RANK_ITERATIONS,
+Constants.RANDOM_RESET_PROBABILITY, 
+stringClassTag, stringClassTag);
+
+Neo4jGraph.saveGraph(streamingContext.sparkContext().sc(), pageRankGraph, Constants.NODE_PAGE_RANK_PROP, new Tuple2<String,String>(Constants.RELATIONS_RANK_LABEL, Constants.RELATIONSHIP_PAGE_RANK_PROP) , scala.Option.apply(new Tuple2<String,String>(Constants.NODE_RANK_LABEL, Constants.PAGE_RANK_REFERENCE_ID)), scala.Option.apply(new Tuple2<String,String>(Constants.NODE_RANK_LABEL, Constants.PAGE_RANK_REFERENCE_ID)), true, stringClassTag, stringClassTag);
+
+\end{lstlisting}
+
+Nel codice \ref{lst:GraphX} sono riportare le righe di codice che esegue il Job di spark sui nodi esistenti nel sistema. Il primo passo è quello di caricare in una struttura dati tutti i nodi salvati precedentemente. GraphX per questo scopo, mette a disposizione la classe \textit{Graph}.
+\\ Caricati i nodi delle transazioni nella struttura dati di Spark viene invocato il metodo \textit{PageRank.run} che esegue il calcolo del PageRank su tutti i nodi del grafo. Questo metodo ritorna un nuovo grafo contenente, per ogni nodo, il valore del PageRank ottenuto.
+\\ Terminata l'esecuzione del metodo, non resta che salvare il nuovo grafo ottenuto nella base dati per un impiego futuro.
+
+\item \textbf{Pubblicazione dei dati}: L'ultima operazione del Job è quella di pubblicare i dati per essere fruiti dalle applicazioni in real-time. Il sistema distribuito quindi, riceve da Bitcoin le informazioni, le storicizza, le analizza e le rimette a disposizione per altri consumatori. Le righe di codice  \ref{lst:pubKafka}, mostrano come sono inviati i dati processati, sul topic \textit{transaction-topic} di Kafka. 
+
+\begin{lstlisting}[language=Java, label=lst:pubKafka, caption={Invio dati a Kafka.}]
+log.info("#### Sending data to kafka ####");
+final Producer<Long, String> producer = KafkaProducerBuilder.createProducer(kafkaHost + ":" + kafkaPort, kafkaAppID );
+try {
+	log.info("Sending JSON: " + json);
+	final ProducerRecord<Long, String> record =
+			new ProducerRecord<>(kafkaTopic, new Random().nextLong(),
+					json);
+	RecordMetadata metadata = producer.send(record).get();
+} finally {
+	producer.flush();
+	producer.close();
+}
+\end{lstlisting}
+
+In particolare, in queste poche righe di codice, viene creato un oggetto KafkaProducer, il quale ha il compito di connettersi al \textit{kafkaHost} e di inviare, tramite il metodo \textit{send}, i dati sul topic settato nel \textit{ProducerRecord}. 
+
 \end{itemize}
 \end{itemize} 
- 
-\section{Funzionamento Blockchain Explorer}
-\label{sec:Funzionamento Blockchain Explorer}
+
+Per visualizzare le elaborazioni del sistema distribuito, è stata creata una applicazione web. Blockchain Explorer infatti, è un sito web che mette a disposizione strumenti per controllare le ultime transazioni, i risultati dell'analisi e la navigazione dell'intera Blockchain. Il codice di questo applicativo può essere riassunto tramite una serie di funzioni:
+
+\begin{itemize}
+\item \textbf{Creazione del server}: NodeJs per servire le varie richieste, provenienti dai client, ha bisogno di creare un server. Il modulo che permette questa funzionalità è \textit{http}. Per questo elaborato però, il server è demandato alla libreria Express.js che ci facilita l'implementazione.
+
+\begin{lstlisting}[language=Javascript, label=lst:serverNode, caption={Creazione server in NodeJS.}]
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.listen(port, function () {
+    console.log('express-handlebars example server listening on: ' + port);
+});
+\end{lstlisting}
+Il listato \ref{lst:serverNode} mostra come sia possibile creare un server in NodeJS. Nello specifico, viene creata una variabile chiamata \textit{app}, inizializzata ad \textit{express}, che contiene l'intero web server. L'applicazione con queste poche righe di codice è in grado di rispondere a migliaia di richieste HTTP da parte dei client.
+\item \textbf{Associazione URL-callback}
+\item \textbf{Prelievo dati da Kafka}
+\item \textbf{Comunicazione tramite Websocket}
+\item \textbf{Renderizzazione dei Grafi}
+\item \textbf{Costruzione delle tabelle}
+\end{itemize}

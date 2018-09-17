@@ -1,11 +1,11 @@
 \section{Diagramma delle classi}
 \label{sec:diagramma delle classi}
 Durante lo sviluppo della parte back-end, sono state create diverse classi di supporto allo sviluppo del componente. In figura \ref{fig:UMLSD}, diagramma delle classi (UML), è possibile vedere tutte le classi che entrano in gioco per la realizzazione dell'applicativo.
-\\L'applicativo sviluppato ha come punto di partenza (\textit{main}) un Job di Spark. Dalla documentazione ufficiale un job di spark è un calcolo parallelo composto da più attività che vengono generate in risposta a un'azione \cite{spark:job}. In parole povere, un job di spark è una serie di istruzioni che vengono eseguite in parallelo su più macchine in parallelo, ottimizzando i tempi di risposta dell'applicativo. 
+\\L'applicativo sviluppato ha come punto di partenza (\textit{main}) un Job di Spark. Dalla documentazione ufficiale un job di Spark è un calcolo parallelo composto da più attività che vengono generate in risposta a un'azione \cite{spark:job}. In parole povere, è una serie di istruzioni che vengono eseguite in parallelo su più macchine, ottimizzando i tempi di risposta dell'applicativo. 
 \\I passi fondamentali per creare un Job di Spark sono:
 \begin{itemize}
 \item \textbf{Caricare le librerie}: Immettere nel proprio \textit{classpath} le librerie di Spark.
-\item \textbf{Inizializzare il contesto di Spark}: La prima operazione di codice da effettuare è quella di inizializzare lo \textit{SparkContext}. Il quale dice a Spark dove sono i cluster da utilizzare ed altre impostazioni quali il numero, i driver di connessione, etc.
+\item \textbf{Inizializzare il contesto di Spark}: La prima operazione di codice da effettuare è quella di inizializzare lo \textit{SparkContext}, in cui comunica la locazione dei cluster da utilizzare ed altre impostazioni quali il numero, i driver di connessione, etc.
 \item \textbf{Parallelizzare le collezioni di dati}: I dati di input devono essere parallelizzati tramite il metodo di SparkContext \textit{parallelize}.
 Con questo metodo gli elementi della collezione vengono copiati per formare un set di dati distribuito che può essere gestito in parallelo. I dati parallelizzati diventano RDD.
 \item \textbf{Operazioni sugli RDD}: Ai dati parallelizzati si applicano le principali operazioni di Spark come map, filter, reduce, etc.
@@ -41,7 +41,7 @@ Ogni file ha un funzione specifica definita di seguito:
 \item  \textbf{\textit{kafka.js}}: Contiene l'implementazione del Kafka Subscriber, quindi si occupa della connessione a Kafka ed alla ricezione dei dati da parte del topic.
 \item  \textbf{\textit{neo4jDriver.js}}: Analogamente a Neo4jManager, viene usato per la connessione ed il recupero dei dati presenti in base dati Neo4j. In particolare, utilizza il linguaggio Cypher per ottenere i risultati dal database. 
 \item  \textbf{\textit{websocket.js}}: Questo script crea un server WebSocket per permettere ai vari client di ricevere le transazioni in real-time tramite protocollo WebSocket.
-\item  \textbf{\textit{Cartella views}}: In questa cartella sono presenti tutti i template del sito. Infatti, contiene tutti i file con estensione \textit{.handlebars} utili al framework per creare pagine HTML dinamiche. All'interno di questi template sono linkati tutti gli script e i fogli di stile presenti nella cartella \textit{public}.
+\item  \textbf{\textit{Cartella views}}: In questa cartella sono presenti tutti i template utilizzati dal sito. Infatti, contiene tutti i file con estensione \textit{.handlebars} utili al framework per creare pagine HTML dinamiche. All'interno di questi template sono linkati tutti gli script e i fogli di stile presenti nella cartella \textit{public}.
 \item  \textbf{\textit{Cartella public}}: Questa cartella contiene tutte le risorse statiche che vengono caricate ed eseguite dai browser. I file Javascript presenti in questa cartella stabiliscono una connessione con il server tramite WebSocket, disegnano il grafo delle transazioni dinamicamente e creano le tabelle all'interno del sito.
 \\Gli script di particolare importanza sono:
 \begin{itemize}

@@ -2,8 +2,8 @@
 \label{chap:implementazione}
 Data la natura dell'elaborato, ossia il recupero e l'analisi delle transazioni provenienti da Bitcoin, si è deciso di implementare una soluzione che prevede i seguenti progetti:
 \begin{itemize}
-\item \textbf{Sistema Distribuito (SD in futuro)}: Applicazione distribuita che implementa la parte back-end;
-\item \textbf{Blockchain Explorer}: applicazione web che implementa il componente front-end.
+\item \textbf{Sistema Distribuito (SD in futuro)}: Applicazione distribuita che implementa la parte back-end;\footnote{\textbf{Sistema Distribuito}: \href{https://github.com/Antonio90/BitcoinSpark.git}{https://github.com/Antonio90/BitcoinSpark.git}.}
+\item \textbf{Blockchain Explorer}: applicazione web che implementa il componente front-end. \footnote{\textbf{Blockchain Explorer}:\href{https://github.com/Antonio90/bitcoin-webapp.git}{https://github.com/Antonio90/bitcoin-webapp.git}.}
 \end{itemize}
 Le due applicazioni sono sviluppate con tecnologie e linguaggi diversi. In questo capitolo, viene esposta l'implementazione dei software, attraverso porzioni di codice  che aiuteranno a capire al meglio come le due applicazione cooperano nel raggiungimento dell'obiettivo finale.
 \\ I linguaggi utilizzati per sviluppare i progetti sono Java 8 per la parte Beck-end , Javascript e HTML5 per la parte front-end.
@@ -32,7 +32,7 @@ L'utilizzo di questo linguaggio per il back-end ha permesso di creare un sistema
 \item \textbf{Tipizzazione dinamica}: In Javascript è possibile dichiarare una variabile senza indicarne il tipo, il quale verrà deciso in fase di runtime \cite{javascript:tutorialspoint}.
 \end{itemize}
 Javascript quindi è stato usato in accoppiata con l'HTML e CSS per rendere l'interfaccia grafica della applicazione web più performante e gradevole. Inoltre, è stato utilizzato anche in forma Server per generare risposte dinamiche da restituire ai client.
-\end{itemize} 
+\end{itemize}
 \input{implementazione/diagramClass}
 \input{implementazione/code}
-\input{implementazione/github}
+\input{implementazione/userInterface}

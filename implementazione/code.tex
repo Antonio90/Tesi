@@ -260,7 +260,7 @@ wss.sendBrodcast = function(message){
 
 Infine, al Server WebSocket viene aggiunta la funzione \textit{sendBrodcast}, richiamata nel listato di Kafka \ref{lst:kafka}, la quale ha il compito di inviare a tutti i client connessi al server il messaggio, \textit{message}, proveniente da Kafka.
 
-\item \textbf{Renderizzazione dei Grafi}: La renderizzazione dei grafi è demandata ai browser dei client. Infatti, il codice \ref{lst:makeGraph} viene inglobato nelle pagine HTML inviate dal server ai vari client. Il browser quindi, riceve dal server sia i dati che il codice da eseguire, generando una pagina come in figura \ref{fig:graphView}.
+\item \textbf{Renderizzazione dei Grafi}: La renderizzazione dei grafi è demandata ai browser dei client. Il codice che segue viene inglobato nelle pagine HTML inviate dal server ai vari client. Il browser quindi, riceve dal server sia i dati che il codice da eseguire, generando una pagina come in figura \ref{fig:graphView}.
 
 \begin{figure}[H]
 	\centering
@@ -268,6 +268,35 @@ Infine, al Server WebSocket viene aggiunta la funzione \textit{sendBrodcast}, ri
 	\caption{Grafo delle transazioni completo.}
 	\label{fig:graphView}
 \end{figure}
+
+\begin{lstlisting}[language=Javascript, label=lst:intGraph, caption={Inizializzazione svg per il grafo.}]
+var svg = d3.select("#" + idSvg),
+        width = + $("#" + idSvg).width(),
+        height = +svg.attr("height");
+
+    var zoomLayer = svg.append('g');
+
+    svg.call(d3.zoom().on('zoom', function(){
+        zoomLayer.attr('transform', d3.event.transform);
+    }));
+
+    zoomLayer.append('defs').append('marker')
+        .attrs({'id':'arrowhead',
+            'viewBox':'-0 -5 10 10',
+            'refX':13,
+            'refY':0,
+            'orient':'auto',
+            'markerWidth':13,
+            'markerHeight':13,
+            'xoverflow':'visible'})
+        .append('svg:path')
+        .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+        .attr('fill', '#999')
+        .style('stroke','none');
+\end{lstlisting}
+
+Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per l'inizializzazione del tag \textit{svg}, presente nella pagina HTML, nella quale verranno disegnate i cerchi e le linee rappresentati rispettivamente nodi ed archi delle transazioni di bitcoin. Infine, su di esso viene aggiunto un layer che permette lo zoom all'interno del grafo.
+
 
 \begin{lstlisting}[language=Javascript, label=lst:makeGraph, caption={Funzione per grafi.}]
 
@@ -548,6 +577,6 @@ Un template quindi non è altro che una pagina statica HTML, la quale in fase di
 	\caption{Grafo delle transazioni completo.}
 	\label{fig:graphView}
 \end{figure}
-In figura è possibile visualizzare la pagina HTML risultante. 
+In figura\ref{fig:graphView} è possibile visualizzare la pagina HTML che viene generata dall'elaborazione del codice \ref{lst:handleb}. 
 
 \end{itemize}

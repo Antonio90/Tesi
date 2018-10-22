@@ -171,13 +171,15 @@ intro,%
 overview,%
 implementazione,%
 conclusioni,%
-app_a,%
+%app_a,%
 }
 
 % FILE DI BIBLIOGRAFIA
-\bibliography{bibliography} 
+%\bibliography{bibliography} 
+\bibliography{bibliography,webbib}
 
-
+\defbibheading{cartaceo}{\section*{Cartacei}}
+\defbibheading{web}{\section*{Sitografia}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,15 +293,21 @@ La seguente tesi ha come obiettivo la realizzazione di un'applicazione distribui
 \include{implementazione}
 \include{conclusioni}
 
-\appendix
+%\appendix
 % INCLUSIONE APPENDICI - - PERSONALIZZARE - TENERE COERENTE CON LISTA IN ALTO
-\include{app_a}
+%\include{app_a}
 
 
 % BIBLIOGRAFIA
 
 \nocite{*}
-\printbibliography
+\chapter*{\refname}
+\label{\refname}
 \addcontentsline{toc}{chapter}{\refname}
+\printbibliography[heading=cartaceo,nottype=online]
+\printbibliography[heading=web,type=online]
+%\printbibliography
+%\addcontentsline{toc}{chapter}{\refname}
+
 
 \end{document}

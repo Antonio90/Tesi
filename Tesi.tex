@@ -36,9 +36,7 @@
 \usepackage[babel]{csquotes}
 \usepackage{hyperref}
 \usepackage[backend=bibtex]{biblatex}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 
 % CONFIGURAZIONE LINK E RIFERIMENTI
@@ -178,9 +176,11 @@ conclusioni,%
 %\bibliography{bibliography} 
 \bibliography{bibliography,webbib}
 
-\defbibheading{cartaceo}{\section*{Cartacei}}
-\defbibheading{web}{\section*{Sitografia}}
+%\defbibheading{cartaceo}{\section*{Cartacei}}
+%\defbibheading{web}{\section*{Sitografia}}
 
+\defbibheading{cartaceo}{\subsection*{Manuali cartacei}}
+\defbibheading{web}{\subsection*{Siti Web consultati}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -300,13 +300,15 @@ La seguente tesi ha come obiettivo la realizzazione di un'applicazione distribui
 
 % BIBLIOGRAFIA
 
-\chapter*{\refname}
-\label{\refname}
-\addcontentsline{toc}{chapter}{\bibname}
+\section*{\refname}
+\thispagestyle{plain}
 \printbibliography[heading=cartaceo,nottype=online]
+\addcontentsline{toc}{chapter}{\refname}
+\pagebreak
+\thispagestyle{plain}
 \printbibliography[heading=web,type=online]
 %\printbibliography
-%\addcontentsline{toc}{chapter}{\refname}
+
 
 
 \end{document}

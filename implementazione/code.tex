@@ -298,6 +298,45 @@ var svg = d3.select("#" + idSvg),
 Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per l'inizializzazione del tag \textit{svg}, presente nella pagina HTML, nella quale verranno disegnate i cerchi e le linee rappresentati rispettivamente nodi ed archi delle transazioni di bitcoin. Infine, su di esso viene aggiunto un layer che permette lo zoom all'interno del grafo.
 
 
+\begin{lstlisting}[language=Javascript, escapechar=|, label=lst:drawLine, caption={Creazione linee.}]
+		simulation = d3.forceSimulation(nodes)
+                            .force("link", d3.forceLink()
+                            .id(function (d) { return d.hash;}))
+                            .force("charge", d3.forceManyBody().strength(-80))
+                            .force("center", d3.forceCenter(width / 2, height / 2))
+                            .on("tick", tick)
+                            .stop();
+
+        simulation.force("link")|\label{line:link}|
+            .links(links);
+
+        for(i=0; i < 300; i++) simulation.tick();
+
+        link = zoomLayer.selectAll(".link")
+                        .data(links)
+                        .enter()
+                        .append("line")
+                        .attr("class", "link")
+                        .attr('marker-end','url(#arrowhead)')
+                        .attr("x1", function(d){ return d.source.x; })
+                        .attr("y1", function(d){ return d.source.y; })
+                        .attr("x2", function(d){ return d.target.x; })
+                        .attr("y2", function(d){ return d.target.y; })
+
+
+        link.append("title")
+            .text(function (d) {
+                var t = "Transaction Hash: " + d.transactionHash + "\n" +
+                        "Received Time: " + d.receivedTime + "\n" +
+                        "Block Hash: " + d.blockHash + "\n" +
+                        "Value: " + d.value;
+                return t;
+
+            });
+\end{lstlisting}
+
+Invece, nel listato \ref{lst:drawLine} sono riportate le righe di codice utili alla creazione dei collegamenti tra i vari nodi del grafo. In particolare, alla riga \ref{line:link} viene utilizzato il metodo \textit{link} di d3.js che prende in input i collegamenti che deve creare. A questi vengono aggiunte le coordinate di partenza e destinazione e l'icona a forma di freccia da utilizzare.
+
 \begin{lstlisting}[language=Javascript, label=lst:makeGraph, caption={Funzione per grafi.}]
 
 var makeSVGTransaction = function(json, idSvg, isBig) {

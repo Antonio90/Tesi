@@ -295,7 +295,7 @@ var svg = d3.select("#" + idSvg),
         .style('stroke','none');
 \end{lstlisting}
 
-Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per l'inizializzazione del tag \textit{svg}, presente nella pagina HTML, nella quale verranno disegnate i cerchi e le linee rappresentati rispettivamente nodi ed archi delle transazioni di bitcoin. Infine, su di esso viene aggiunto un layer che permette lo zoom all'interno del grafo.
+Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per l'inizializzazione del tag \textit{svg}, presente nella pagina HTML, nella quale verranno disegnate cerchi e le linee rappresentati rispettivamente nodi ed archi del grafo delle transazioni di bitcoin. Inoltre, su di esso viene aggiunto un layer per lo zoom, che permette all'utente finale di avere una fluida navigazione all'interno del grafo.
 
 
 \begin{lstlisting}[language=Javascript, escapechar=|, label=lst:drawLine, caption={Creazione linee.}]
@@ -335,122 +335,14 @@ Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per
             });
 \end{lstlisting}
 
-Invece, nel listato \ref{lst:drawLine} sono riportate le righe di codice utili alla creazione dei collegamenti tra i vari nodi del grafo. In particolare, alla riga \ref{line:link} viene utilizzato il metodo \textit{link} di d3.js che prende in input i collegamenti che deve creare. A questi vengono aggiunte le coordinate di partenza e destinazione e l'icona a forma di freccia da utilizzare.
 
-\begin{lstlisting}[language=Javascript, label=lst:makeGraph, caption={Funzione per grafi.}]
+Invece, nel listato \ref{lst:drawLine} sono riportate le righe di codice utili alla creazione degli archi tra i vari nodi del grafo. In particolare, alla riga \ref{line:link} viene utilizzato il metodo \textit{link} di d3.js che prende in input i dati da renderizzare, i quali sono trasformati in elementi grafici dell'svg chiamati \textit{line}. A questi sono aggiunti le coordinate di partenza e destinazione, l'icona a forma di freccia e l'attributo \textit{title} contenente tutte le informazioni relative alla transazione (Hash, Timestam, valore totale della transazione e l'hash del blocco di appartenenza ).
 
-var makeSVGTransaction = function(json, idSvg, isBig) {
-
-    var colors = d3.scaleOrdinal(d3.schemeCategory10);
-
-    var simulation;
-
-    var svg = d3.select("#" + idSvg),
-        width = + $("#" + idSvg).width(),
-        height = +svg.attr("height");
-
-    var zoomLayer = svg.append('g');
-
-    svg.call(d3.zoom().on('zoom', function(){
-        zoomLayer.attr('transform', d3.event.transform);
-    }));
-
-    zoomLayer.append('defs').append('marker')
-        .attrs({'id':'arrowhead',
-            'viewBox':'-0 -5 10 10',
-            'refX':13,
-            'refY':0,
-            'orient':'auto',
-            'markerWidth':13,
-            'markerHeight':13,
-            'xoverflow':'visible'})
-        .append('svg:path')
-        .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
-        .attr('fill', '#999')
-        .style('stroke','none');
-
-    var dati = getLinksandNodes(json);
-    update(dati.links, d3.values(dati.nodes));
-
-    function update(links, nodes) {
-
-        simulation = d3.forceSimulation(nodes)
-                            .force("link", d3.forceLink()
-                            .id(function (d) { return d.hash;}))
-                            .force("charge", d3.forceManyBody().strength(-80))
-                            .force("center", d3.forceCenter(width / 2, height / 2))
-                            .on("tick", tick)
-                            .stop();
-
-        simulation.force("link")
-            .links(links);
-
-        for(i=0; i < 300; i++) simulation.tick();
-
-        link = zoomLayer.selectAll(".link")
-                        .data(links)
-                        .enter()
-                        .append("line")
-                        .attr("class", "link")
-                        .attr('marker-end','url(#arrowhead)')
-                        .attr("x1", function(d){ return d.source.x; })
-                        .attr("y1", function(d){ return d.source.y; })
-                        .attr("x2", function(d){ return d.target.x; })
-                        .attr("y2", function(d){ return d.target.y; })
-
-
-        link.append("title")
-            .text(function (d) {
-                var t = "Transaction Hash: " + d.transactionHash + "\n" +
-                        "Received Time: " + d.receivedTime + "\n" +
-                        "Block Hash: " + d.blockHash + "\n" +
-                        "Value: " + d.value;
-                return t;
-
-            });
-
-
-        edgepaths = zoomLayer.selectAll(".edgepath")
-            .data(links)
-            .enter()
-            .append('path')
-            .attrs({
-                'class': 'edgepath',
-                'fill-opacity': 0,
-                'stroke-opacity': 0,
-                'id': function (d, i) {return 'edgepath' + i}
-            })
-            .attr("d", function(d){ 
-            return "M " + d.source.x + " " + d.source.y + " L " 
-            + d.target.x + " " + d.target.y; })
-            .style("pointer-events", "none");
-
-        edgelabels = zoomLayer.selectAll(".edgelabel")
-            .data(links)
-            .enter()
-            .append('text')
-            .style("pointer-events", "none")
-            .attrs({
-                'class': 'edgelabel',
-                'id': function (d, i) {return 'edgelabel' + i},
-                'font-size': 10,
-                'fill': '#aaa'
-            })
-            .attr("d", function(d){ 
-            return "M " + d.source.x + " " + d.source.y + " L " 
-            + d.target.x + " " + d.target.y; })
-
-        edgelabels.append('textPath')
-            .attr('xlink:href', function (d, i) {return '#edgepath' + i})
-            .style("text-anchor", "middle")
-            .style("pointer-events", "none")
-            .attr("startOffset", "50%")
-            .text(function (d) {return isBig ? '' : d.value});
-
+\begin{lstlisting}[language=Javascript, escapechar=|, label=lst:drawNode, caption={Creazione dei nodi del grafo.}]
 
         node = zoomLayer
             .selectAll(".node")
-            .data(nodes)
+            .data(nodes) |\label{line:nodes}|
             .enter()
             .append("g")
             .attr("class", "node")
@@ -476,70 +368,9 @@ var makeSVGTransaction = function(json, idSvg, isBig) {
 
         node.append("title")
             .text(function (d) {return d.hash;});
-
-        if(!isBig) {
-            node.append("text")
-                .attr("dy", -3)
-                .attr("font-size", 14)
-                .text(function (d) {return d.hash;});
-        }
-
-
-        function dragstarted(d) {
-            if (!d3.event.active) 
-            	simulation.alphaTarget(0.3).restart()
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-
-        function dragged(d) {
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-        }
-
-        function dragended(d){
-            if(!d3.event.active) simulation.alphaTarget(0);
-            d.fx = undefined;
-            d.fy = undefined;
-        }
-
-        function tick(){
-            link
-                .attr("x1", function(d){ return d.source.x; })
-                .attr("y1", function(d){ return d.source.y; })
-                .attr("x2", function(d){ return d.target.x; })
-                .attr("y2", function(d){ return d.target.y; })
-
-            node
-                .attr("transform", function(d){ 
-                return "translate(" + d.x + ", " + d.y + ")";})
-
-            edgepaths
-                .attr("d", function(d){
-                    return "M " + d.source.x + " " 
-                    + d.source.y + " L " + d.target.x 
-                    + " " + d.target.y;
-                })
-
-            edgelabels
-                .attr("transform", function(d){
-                if(d.target.x < d.source.x){
-                    var bbox = this.getBBox();
-                    rx = bbox.x + bbox.width  /2;
-                    ry = bbox.y + bbox.height /2;
-                    return "rotate(180 " + rx + " " + ry + " )";
-                } else {
-                    return "rotate(0)";
-                }
-            })
-
-        }
-
-    }
-}
 \end{lstlisting}
 
-Il listato \ref{lst:makeGraph} a primo impatto sembra molto difficile da capire, ma non è cosi. Infatti questo codice utilizza selettori e funzioni implementate dalla libreria D3. Nello specifico i nodi e le transazioni provenienti dal server vengono associati rispettivamente ad elementi grafici come il \textit{circle} o \textit{path} e disegnati all'interno della pagina. Questo modalità di operare, inoltre, permette di modificare i grafi semplicemente cambiando i dati in memoria. Le altre righe di codice infine, indicano al browser come e quali effetti grafici utilizzare.
+Analogamente a quanto fatto per gli archi del grafo, nel listato \ref{lst:drawNode} viene mostrato come con D3.js sia possibile associare i dati esistenti in memoria ad elementi grafici sullo schermo. In questo caso, viene utilizzato il metodo \textit{data}, riga \ref{line:nodes}, per passare i nodi da disegnare nella pagina HTML al framework. I nodi, quindi, vengono disegnati tramite il tag \textit{circle} e correlati dalla classe \textit{node} che darà un colore diverso per ogni nodo. Infine, come accade agli archi, viene aggiunto un \textit{title} il quale contiene l'hash dei destinatari o mittenti delle transazioni.
  
 \item \textbf{Costruzione delle tabelle}: Altro aspetto importante è la creazione delle tabelle. In Blockchain explorer è possibile visionare in forma tabellare le ultime transazioni processate, la sintesi di una transazione singola oppure i valori del PageRank per ogni hash. Nel codice \ref{lst:table}  è possibile vedere come sia facile trasformare una semplice \textit{<table>} HTML in una tabella con colonne ordinabili, paginazione e filtri di ricerca. Il tutto viene fatto dalla funzione \textit{DataTable(dataTableConfig)} il quale invoca la libreria DataTable che trasforma la tabella \textit{realTimeTransactions} con le proprietà inserite nella variabile \textit{dataTableConfig}.
 

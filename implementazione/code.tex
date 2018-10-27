@@ -261,13 +261,6 @@ wss.sendBrodcast = function(message){
 Infine, al Server WebSocket viene aggiunta la funzione \textit{sendBrodcast}, richiamata nel listato di Kafka \ref{lst:kafka}, la quale ha il compito di inviare a tutti i client connessi al server il messaggio, \textit{message}, proveniente da Kafka.
 \item \textbf{Renderizzazione dei Grafi}: La renderizzazione dei grafi è demandata ai browser dei client. Il codice che segue viene inglobato nelle pagine HTML inviate dal server ai vari client. Il browser quindi, riceve dal server sia i dati che il codice da eseguire, generando una pagina come in figura \ref{fig:graphView}.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\textwidth, height=0.65\textheight]{images/graphView.png}
-	\caption{Grafo delle transazioni completo.}
-	\label{fig:graphView}
-\end{figure}
-
 \begin{lstlisting}[language=Javascript, label=lst:intGraph, caption={Inizializzazione svg per il grafo.}]
 var svg = d3.select("#" + idSvg),
         width = + $("#" + idSvg).width(),
@@ -296,6 +289,13 @@ var svg = d3.select("#" + idSvg),
 
 Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per l'inizializzazione del tag \textit{svg}, presente nella pagina HTML, nella quale verranno disegnate cerchi e le linee rappresentati rispettivamente nodi ed archi del grafo delle transazioni di bitcoin. Inoltre, su di esso viene aggiunto un layer per lo zoom, che permette all'utente finale di avere una fluida navigazione all'interno del grafo.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.50\textheight]{images/graphView.png}
+	\caption{Grafo delle transazioni completo.}
+	\label{fig:graphView}
+\end{figure}
+
 
 \begin{lstlisting}[language=Javascript, escapechar=|, label=lst:drawLine, caption={Creazione linee.}]
 		simulation = d3.forceSimulation(nodes)
@@ -310,17 +310,6 @@ Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per
             .links(links);
 
         for(i=0; i < 300; i++) simulation.tick();
-
-        link = zoomLayer.selectAll(".link")
-                        .data(links)
-                        .enter()
-                        .append("line")
-                        .attr("class", "link")
-                        .attr('marker-end','url(#arrowhead)')
-                        .attr("x1", function(d){ return d.source.x; })
-                        .attr("y1", function(d){ return d.source.y; })
-                        .attr("x2", function(d){ return d.target.x; })
-                        .attr("y2", function(d){ return d.target.y; })
 
 
         link.append("title")
@@ -442,7 +431,7 @@ Un template quindi non è altro che una pagina statica HTML, la quale in fase di
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\textwidth, height=0.50\textheight]{images/graphView.png}
+	\includegraphics[width=\textwidth, height=0.80\textheight]{images/graphView.png}
 	\caption{Grafo delle transazioni completo.}
 	\label{fig:tableView}
 \end{figure}

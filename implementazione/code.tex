@@ -259,7 +259,6 @@ wss.sendBrodcast = function(message){
 \end{lstlisting}
 
 Infine, al Server WebSocket viene aggiunta la funzione \textit{sendBrodcast}, richiamata nel listato di Kafka \ref{lst:kafka}, la quale ha il compito di inviare a tutti i client connessi al server il messaggio, \textit{message}, proveniente da Kafka.
-
 \item \textbf{Renderizzazione dei Grafi}: La renderizzazione dei grafi è demandata ai browser dei client. Il codice che segue viene inglobato nelle pagine HTML inviate dal server ai vari client. Il browser quindi, riceve dal server sia i dati che il codice da eseguire, generando una pagina come in figura \ref{fig:graphView}.
 
 \begin{figure}[H]
@@ -336,7 +335,7 @@ Nel listato \ref{lst:intGraph} sono riportate le righe di codice che servono per
 \end{lstlisting}
 
 
-Invece, nel listato \ref{lst:drawLine} sono riportate le righe di codice utili alla creazione degli archi tra i vari nodi del grafo. In particolare, alla riga \ref{line:link} viene utilizzato il metodo \textit{link} di d3.js che prende in input i dati da renderizzare, i quali sono trasformati in elementi grafici dell'svg chiamati \textit{line}. A questi sono aggiunti le coordinate di partenza e destinazione, l'icona a forma di freccia e l'attributo \textit{title} contenente tutte le informazioni relative alla transazione (Hash, Timestam, valore totale della transazione e l'hash del blocco di appartenenza ).
+Mentre, nel listato \ref{lst:drawLine} sono riportate le righe di codice utili alla creazione degli archi tra i vari nodi del grafo. In particolare, alla riga \ref{line:link} viene utilizzato il metodo \textit{link} di d3.js che prende in input i dati da renderizzare, i quali sono trasformati in elementi grafici dell'svg chiamati \textit{line}. A questi sono aggiunti le coordinate di partenza e destinazione, l'icona a forma di freccia e l'attributo \textit{title} contenente tutte le informazioni relative alla transazione (Hash, Timestam, valore totale della transazione e l'hash del blocco di appartenenza ).
 
 \begin{lstlisting}[language=Javascript, escapechar=|, label=lst:drawNode, caption={Creazione dei nodi del grafo.}]
 
@@ -443,10 +442,11 @@ Un template quindi non è altro che una pagina statica HTML, la quale in fase di
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\textwidth, height=0.80\textheight]{images/graphView.png}
+	\includegraphics[width=\textwidth, height=0.50\textheight]{images/graphView.png}
 	\caption{Grafo delle transazioni completo.}
-	\label{fig:graphView}
+	\label{fig:tableView}
 \end{figure}
-In figura \ref{fig:graphView} è possibile visualizzare la pagina HTML che viene generata dall'elaborazione del codice \ref{lst:handleb}. 
+
+In figura \ref{fig:tableView} è possibile visualizzare la pagina HTML che viene generata dall'elaborazione del codice \ref{lst:handleb}. 
 
 \end{itemize}
